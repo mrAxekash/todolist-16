@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import { TodolistsList } from '../features/TodolistsList/TodolistsList'
-import { useAppSelector } from './store'
-import { RequestStatusType } from './app-reducer'
+import { useAppDispatch, useAppSelector } from './store'
+import { isInitializeAppTC, RequestStatusType } from './app-reducer'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
@@ -15,6 +15,7 @@ import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar'
 import { createBrowserRouter, Navigate, Route, RouterProvider, Routes } from 'react-router-dom'
 import { Login } from '../features/auth/Login/Login'
 import { ErrorPage } from '../components/ErrorPage/ErrorPage'
+import { CircularProgress } from '@mui/material'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,22 @@ const router = createBrowserRouter([
 
 function App() {
   const status = useAppSelector<RequestStatusType>((state) => state.app.status)
+
+  const dispatch = useAppDispatch()
+  const isInitialized = useAppSelector((state) => state.app.isInitialized)
+
+  useEffect(() => {
+    dispatch(isInitializeAppTC())
+  }, [])
+
+  if (!isInitialized) {
+    return (
+      <div style={{ position: 'fixed', top: '30%', textAlign: 'center', width: '100%' }}>
+        <CircularProgress />
+      </div>
+    )
+  }
+
   return (
     <div className="App">
       <ErrorSnackbar />

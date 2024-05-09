@@ -16,6 +16,8 @@ import { createBrowserRouter, Navigate, Route, RouterProvider, Routes } from 're
 import { Login } from '../features/auth/Login/Login'
 import { ErrorPage } from '../components/ErrorPage/ErrorPage'
 import { CircularProgress } from '@mui/material'
+import { selectIsLoggedIn } from '../features/auth/auth-selectors'
+import { logoutTC } from '../features/auth/auth-reducer'
 
 const router = createBrowserRouter([
   {
@@ -42,10 +44,15 @@ function App() {
 
   const dispatch = useAppDispatch()
   const isInitialized = useAppSelector((state) => state.app.isInitialized)
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
 
   useEffect(() => {
     dispatch(isInitializeAppTC())
   }, [])
+
+  const handleLogoutButtonClick = () => {
+    dispatch(logoutTC())
+  }
 
   if (!isInitialized) {
     return (
@@ -64,7 +71,11 @@ function App() {
             <Menu />
           </IconButton>
           <Typography variant="h6">News</Typography>
-          <Button color="inherit">Login</Button>
+          {isLoggedIn && (
+            <Button color={'inherit'} onClick={handleLogoutButtonClick}>
+              Log out
+            </Button>
+          )}
         </Toolbar>
         {status === 'loading' && <LinearProgress />}
       </AppBar>

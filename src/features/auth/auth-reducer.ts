@@ -3,6 +3,8 @@ import { authApi, LoginParams } from '../../api/auth-api'
 import { SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType } from '../../app/app-reducer'
 import { handleServerAppError, handleServerNetworkError } from '../../utils/error-utils'
 import { ResultCodes } from '../../api/todolists-api'
+import { clearTodolistsAndTasksAC, setTodolistsAC } from '../TodolistsList/todolists-reducer'
+import { setTasksAC } from '../TodolistsList/tasks-reducer'
 
 type InitialStateType = typeof initialState
 
@@ -48,6 +50,7 @@ export const logoutTC = () => async (dispatch: Dispatch) => {
     if (res.data.resultCode === ResultCodes.Succeeded) {
       dispatch(setAppStatusAC('succeeded'))
       dispatch(setIsLoggedInAC(false))
+      dispatch(clearTodolistsAndTasksAC())
     } else {
       handleServerAppError(res.data, dispatch)
     }
